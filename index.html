@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>싸이월드 감성 미니홈피</title>
+    <title>응피</title>
     <style>
         body {
             background-color: #8c8c8c;
@@ -41,13 +41,13 @@
             box-sizing: border-box;
         }
 
-        /* 바인더 링 - 입체 레이어 수정 */
+        /* 바인더 링 */
         .binder-rings {
             position: absolute;
-            left: 212px; /* 좌측 상자 경계면에 맞춤 */
+            left: 215px;
             top: 0;
             bottom: 0;
-            width: 45px;
+            width: 55px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -63,14 +63,13 @@
         }
         .ring-container {
             position: relative;
-            width: 45px;
-            height: 16px;
+            width: 55px;
+            height: 12px;
         }
-        /* 종이를 뚫은 듯한 구멍 효과 */
         .ring-hole-left, .ring-hole-right {
             position: absolute;
-            width: 8px;
-            height: 14px;
+            width: 6px;
+            height: 10px;
             background-color: #2b2b2b;
             border-radius: 50%;
             top: 1px;
@@ -80,18 +79,17 @@
         .ring-hole-left { left: 2px; }
         .ring-hole-right { right: 2px; }
 
-        /* 구멍 위로 튀어나오는 링 몸통 */
         .ring-body {
             position: absolute;
-            left: 5px;
-            top: -2px;
-            width: 35px;
-            height: 18px;
-            border-radius: 8px;
+            left: 4px;
+            top: -1px;
+            width: 47px;
+            height: 12px;
+            border-radius: 6px;
             background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 20%, #888888 50%, #555555 75%, #dddddd 100%);
             border: 1px solid #444;
             box-sizing: border-box;
-            box-shadow: 0px 4px 5px rgba(0,0,0,0.4);
+            box-shadow: 0px 3px 4px rgba(0,0,0,0.4);
             z-index: 21;
         }
 
@@ -99,7 +97,7 @@
         .left-box {
             display: flex;
             flex-direction: column;
-            width: 210px;
+            width: 215px;
             height: 100%;
             flex-shrink: 0;
             z-index: 1;
@@ -108,10 +106,10 @@
         .right-box {
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-flex: flex-start;
             flex-grow: 1;
-            height: 100%;
-            margin-left: 35px;
+            height: 101%;
+            margin-left: 25px;
             z-index: 1;
             box-sizing: border-box;
         }
@@ -187,7 +185,7 @@
         }
         .profile-img-wrapper {
             width: 145px;
-            height: 115px;
+            height: 145px;
             border: 1px solid #d9d9d9;
             background-color: #f6f6f6;
             display: flex;
@@ -400,7 +398,7 @@
         .btn-delete { background-color: #777; display: none; }
         .btn-delete:hover { background-color: #555; }
 
-        /* 픽셀 미니룸 스타일 변경 */
+        /* 픽셀 미니룸 스타일 */
         .miniroom-header-row {
             display: flex;
             justify-content: space-between;
@@ -436,7 +434,7 @@
             background-color: #000;
         }
 
-        /* 중요일정 및 위시리스트 컴포넌트 스타일 */
+        /* 중요일정 및 위시리스트 */
         .home-list-section {
             display: flex;
             gap: 12px;
@@ -486,7 +484,7 @@
             margin: 0;
         }
 
-        /* 리뷰 전용 UI */
+        /* 리뷰 */
         .filter-tabs {
             display: flex;
             gap: 3px;
@@ -526,7 +524,6 @@
         .tag-book { background: #4caf50; }
         .tag-etc { background: #ff9800; } 
 
-        /* 추가 리뷰(댓글) 구조 디자인 */
         .sub-review-section {
             margin-top: 6px;
             background: #f0f0f0;
@@ -757,7 +754,26 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+    import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAQdepCMLBffqjEhAvWM4NclP1P80MiL5M",
+        authDomain: "eungview-5e3f2.firebaseapp.com",
+        projectId: "eungview-5e3f2",
+        storageBucket: "eungview-5e3f2.firebasestorage.app",
+        messagingSenderId: "513419971849",
+        appId: "1:513419971849:web:ae7e4e8ebdaf7d182e97d8",
+        measurementId: "G-6VRHB68Y0X",
+        databaseURL: "https://eungview-5e3f2-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
     const korDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     let currentSelectedKey = ""; 
     let calYear, calMonth; 
@@ -772,121 +788,131 @@
     const yearFilter = document.getElementById('yearFilter');
     const monthFilter = document.getElementById('monthFilter');
 
-    // 픽셀 데이터 관리를 위한 배열 생성 (20x10 = 200칸)
-    let pixelData = [];
+    let pixelData = Array(200).fill(0);
+    let diariesGlobal = {};
 
     window.onload = function() {
-        loadTitle();
-        loadProfilePhoto();
-        initPixelMiniroom(); // 픽셀 보드 생성 함수 연결
-        loadStatus();
-        loadReviewMsgs();
-        loadGuestbookMsgs();
-        loadHomeLists();
-        
         const today = new Date();
         calYear = today.getFullYear();
         calMonth = today.getMonth(); 
         
         yearFilter.value = String(calYear);
         monthFilter.value = String(calMonth + 1).padStart(2, '0');
-
         setTargetDate(`${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+
+        // [수정] Firebase 대기 시간에 흰 화면이 뜨지 않도록 구조적 선행 렌더링 호출
         renderCalendar();
-        displayRightDiaries();
+        renderPixelMiniroom();
+
+        onValue(ref(db, 'cyDiaryTitle'), (snapshot) => {
+            const val = snapshot.val();
+            document.getElementById('titleText').innerText = val || "▲ 내 공간에 온 걸 환영해..★";
+        });
+
+        onValue(ref(db, 'cyProfilePhoto'), (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                document.getElementById('profileImg').src = val;
+                document.getElementById('profileImg').style.display = 'block';
+                document.getElementById('photoPlaceholder').style.display = 'none';
+            } else {
+                document.getElementById('profileImg').style.display = 'none';
+                document.getElementById('photoPlaceholder').style.display = 'block';
+            }
+        });
+
+        onValue(ref(db, 'cyStatusMsg'), (snapshot) => {
+            const val = snapshot.val();
+            document.getElementById('statusText').innerText = val || "지정된 상태메세지가 없다.. (더블클릭 수정)";
+        });
+
+        onValue(ref(db, 'cyPixelMiniroom'), (snapshot) => {
+            const val = snapshot.val();
+            pixelData = val ? JSON.parse(val) : Array(200).fill(0);
+            renderPixelMiniroom();
+        });
+
+        onValue(ref(db, 'cyHomeTodo'), (snapshot) => {
+            renderHomeList('todo', snapshot.val() || {});
+        });
+
+        onValue(ref(db, 'cyHomeWish'), (snapshot) => {
+            renderHomeList('wish', snapshot.val() || {});
+        });
+
+        onValue(ref(db, 'cyDiary'), (snapshot) => {
+            diariesGlobal = snapshot.val() || {};
+            renderCalendar();
+            displayRightDiaries();
+            checkDiaryByDate(currentSelectedKey);
+        });
+
+        onValue(ref(db, 'cyReviewData'), (snapshot) => {
+            loadReviewMsgs(snapshot.val() || {});
+        });
+
+        onValue(ref(db, 'cyGuestbookData'), (snapshot) => {
+            loadGuestbookMsgs(snapshot.val() || {});
+        });
     };
 
-    function switchTab(tabName) {
+    window.switchTab = function(tabName) {
         document.querySelectorAll('.cy-tab').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.menu-content').forEach(el => el.classList.remove('active'));
         document.getElementById(`tab-${tabName}`).classList.add('active');
         document.getElementById(`content-${tabName}`).classList.add('active');
     }
 
-    function loadHomeLists() {
-        renderHomeList('todo');
-        renderHomeList('wish');
-    }
-
-    function renderHomeList(type) {
+    function renderHomeList(type, itemsObj) {
         const area = document.getElementById(type === 'todo' ? 'todoListArea' : 'wishListArea');
         area.innerHTML = '';
-        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
-        const items = JSON.parse(localStorage.getItem(key) || '[]');
-
-        items.forEach((item, index) => {
+        Object.keys(itemsObj).forEach((key) => {
             const li = document.createElement('li');
             li.className = 'card-item';
             li.innerHTML = `
-                <input type="checkbox" onclick="removeHomeItem('${type}', ${index})">
-                <span>${item}</span>
+                <input type="checkbox" onclick="removeHomeItem('${type}', '${key}')">
+                <span>${itemsObj[key]}</span>
             `;
             area.appendChild(li);
         });
     }
 
-    function addHomeItem(type) {
+    window.addHomeItem = function(type) {
         const input = document.getElementById(type === 'todo' ? 'todoInput' : 'wishInput');
         const value = input.value.trim();
         if(!value) return;
 
-        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
-        const items = JSON.parse(localStorage.getItem(key) || '[]');
-        items.push(value);
-        localStorage.setItem(key, JSON.stringify(items));
-
+        const listRef = ref(db, type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish');
+        push(listRef, value);
         input.value = '';
-        renderHomeList(type);
     }
 
-    function removeHomeItem(type, index) {
-        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
-        let items = JSON.parse(localStorage.getItem(key) || '[]');
-        items.splice(index, 1);
-        localStorage.setItem(key, JSON.stringify(items));
-        renderHomeList(type);
+    window.removeHomeItem = function(type, key) {
+        remove(ref(db, `${type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish'}/${key}`));
     }
 
-    /* 픽셀 미니룸 초기화 및 조작 로직 */
-    function initPixelMiniroom() {
+    function renderPixelMiniroom() {
         const board = document.getElementById('pixelBoard');
         board.innerHTML = '';
-        
-        const savedData = localStorage.getItem('cyPixelMiniroom');
-        if (savedData) {
-            pixelData = JSON.parse(savedData);
-        } else {
-            pixelData = Array(200).fill(0); // 20 * 10 = 2000
-        }
-
         for (let i = 0; i < 200; i++) {
             const cell = document.createElement('div');
             cell.className = 'pixel-cell';
-            if (pixelData[i] === 1) {
-                cell.classList.add('black');
-            }
+            if (pixelData[i] === 1) cell.classList.add('black');
             
             cell.onclick = function() {
-                if (pixelData[i] === 0) {
-                    pixelData[i] = 1;
-                    cell.classList.add('black');
-                } else {
-                    pixelData[i] = 0;
-                    cell.classList.remove('black');
-                }
-                localStorage.setItem('cyPixelMiniroom', JSON.stringify(pixelData));
+                pixelData[i] = pixelData[i] === 0 ? 1 : 0;
+                set(ref(db, 'cyPixelMiniroom'), JSON.stringify(pixelData));
             };
             board.appendChild(cell);
         }
     }
 
-    function clearPixelMiniroom() {
+    window.clearPixelMiniroom = function() {
         pixelData = Array(200).fill(0);
-        localStorage.setItem('cyPixelMiniroom', JSON.stringify(pixelData));
-        document.querySelectorAll('.pixel-cell').forEach(cell => cell.classList.remove('black'));
+        set(ref(db, 'cyPixelMiniroom'), JSON.stringify(pixelData));
     }
 
-    function addReviewMsg() {
+    window.addReviewMsg = function() {
         const type = document.getElementById('reviewType').value;
         const title = document.getElementById('reviewTitle').value.trim();
         const star = document.getElementById('reviewStar').value;
@@ -895,114 +921,88 @@
         if(!star) { alert('별점을 선택해라..★'); return; }
         if(!title || !comment) { alert('제목과 감상평을 모두 채워라..★'); return; }
 
-        const reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
-        reviews.unshift({ 
-            id: Date.now(), 
+        const reviewRef = ref(db, 'cyReviewData');
+        push(reviewRef, {
             type, 
             title, 
             star, 
             comment, 
-            date: new Date().toLocaleDateString(),
-            subReviews: [] 
+            date: new Date().toLocaleDateString()
         });
-        localStorage.setItem('cyReviewData', JSON.stringify(reviews));
         
         document.getElementById('reviewTitle').value = '';
         document.getElementById('reviewStar').value = '';
         document.getElementById('reviewComment').value = '';
-        loadReviewMsgs();
     }
 
-    function addSubReview(reviewId) {
+    window.addSubReview = function(reviewId) {
         const inputField = document.getElementById(`subInput-${reviewId}`);
         const text = inputField.value.trim();
         if(!text) { alert('추가 리뷰 내용을 입력해라..★'); return; }
 
-        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
-        const targetIndex = reviews.findIndex(r => r.id === reviewId);
-        
-        if(targetIndex !== -1) {
-            if(!reviews[targetIndex].subReviews) reviews[targetIndex].subReviews = [];
-            reviews[targetIndex].subReviews.push({
-                id: Date.now(),
-                comment: text,
-                date: new Date().toLocaleDateString()
-            });
-            localStorage.setItem('cyReviewData', JSON.stringify(reviews));
-            loadReviewMsgs();
-        }
+        const subRef = ref(db, `cyReviewData/${reviewId}/subReviews`);
+        push(subRef, {
+            comment: text,
+            date: new Date().toLocaleDateString()
+        });
+        inputField.value = '';
     }
 
-    function deleteSubReview(reviewId, subId) {
+    window.deleteSubReview = function(reviewId, subId) {
         if(!confirm('이 추가 리뷰를 삭제하겠느냐..★')) return;
-        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
-        const targetIndex = reviews.findIndex(r => r.id === reviewId);
-        
-        if(targetIndex !== -1 && reviews[targetIndex].subReviews) {
-            reviews[targetIndex].subReviews = reviews[targetIndex].subReviews.filter(s => s.id !== subId);
-            localStorage.setItem('cyReviewData', JSON.stringify(reviews));
-            loadReviewMsgs();
-        }
+        remove(ref(db, `cyReviewData/${reviewId}/subReviews/${subId}`));
     }
 
-    function deleteReviewMsg(id) {
+    window.deleteReviewMsg = function(id) {
         if(!confirm('리뷰 기록을 삭제하겠느냐..★')) return;
-        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
-        reviews = reviews.filter(r => r.id !== id);
-        localStorage.setItem('cyReviewData', JSON.stringify(reviews));
-        loadReviewMsgs();
+        remove(ref(db, `cyReviewData/${id}`));
     }
 
-    function filterReviewType(type) {
+    window.filterReviewType = function(type) {
         currentReviewTypeFilter = type;
         document.querySelectorAll('[id^="f-type-"]').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`f-type-${type}`).classList.add('active');
-        loadReviewMsgs();
+        onValue(ref(db, 'cyReviewData'), (snapshot) => { loadReviewMsgs(snapshot.val() || {}); }, { onlyOnce: true });
     }
 
-    function filterReviewStar(star) {
+    window.filterReviewStar = function(star) {
         currentReviewStarFilter = star;
         document.querySelectorAll('[id^="f-star-"]').forEach(btn => btn.classList.remove('active'));
-        
-        let targetId = 'all';
-        if(star !== 'all') {
-            targetId = star.length; 
-        }
+        let targetId = star === 'all' ? 'all' : star.length; 
         document.getElementById(`f-star-${targetId}`).classList.add('active');
-        loadReviewMsgs();
+        onValue(ref(db, 'cyReviewData'), (snapshot) => { loadReviewMsgs(snapshot.val() || {}); }, { onlyOnce: true });
     }
 
-    function loadReviewMsgs() {
+    function loadReviewMsgs(dataObj) {
         const area = document.getElementById('reviewListArea');
         area.innerHTML = '';
-        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
         
-        if(currentReviewTypeFilter !== 'all') {
-            reviews = reviews.filter(r => r.type === currentReviewTypeFilter);
-        }
-        if(currentReviewStarFilter !== 'all') {
-            reviews = reviews.filter(r => r.star === currentReviewStarFilter);
-        }
+        let list = Object.keys(dataObj).map(key => ({ id: key, ...dataObj[key] })).reverse();
+        
+        if(currentReviewTypeFilter !== 'all') list = list.filter(r => r.type === currentReviewTypeFilter);
+        if(currentReviewStarFilter !== 'all') list = list.filter(r => r.star === currentReviewStarFilter);
         
         const typeNames = { movie: '영화', comic: '만화', book: '책', etc: '기타' };
 
-        reviews.forEach(r => {
+        list.forEach(r => {
             const el = document.createElement('div');
             el.className = 'board-item';
             
-            const subs = r.subReviews || [];
             let subListHtml = '';
-            subs.forEach(s => {
-                subListHtml += `
-                    <div class="sub-review-item">
-                        <span>ㄴ ${s.comment}</span>
-                        <div>
-                            <span style="color:#aaa; font-size:9px;">${s.date}</span>
-                            <span style="color:#ff8888; cursor:pointer; margin-left:4px;" onclick="deleteSubReview(${r.id}, ${s.id})">[x]</span>
+            if(r.subReviews) {
+                Object.keys(r.subReviews).forEach(sKey => {
+                    const s = r.subReviews[sKey];
+                    subListHtml += `
+                        <div class="sub-review-item">
+                            <span>ㄴ ${s.comment}</span>
+                            <div>
+                                <span style="color:#aaa; font-size:9px;">${s.date}</span>
+                                <span style="color:#ff8888; cursor:pointer; margin-left:4px;" onclick="deleteSubReview('${r.id}', '${sKey}')">[x]</span>
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
             el.innerHTML = `
                 <div class="board-header">
@@ -1015,14 +1015,14 @@
                 <div style="padding:4px 0; color:#555; display:flex; justify-content:between; align-items:center;">
                     <span style="flex:1;">${r.comment}</span>
                     <span style="color:#aaa; font-size:10px; margin-left:10px;">${r.date}</span>
-                    <span style="color:#ff8888; cursor:pointer; font-size:10px; margin-left:8px;" onclick="deleteReviewMsg(${r.id})">[X]</span>
+                    <span style="color:#ff8888; cursor:pointer; font-size:10px; margin-left:8px;" onclick="deleteReviewMsg('${r.id}')">[X]</span>
                 </div>
                 
                 <div class="sub-review-section">
                     <div class="sub-review-list">${subListHtml || '<div style="color:#aaa; font-size:10px;">작성된 추가 리뷰가 없다..★</div>'}</div>
                     <div class="sub-review-input-row">
                         <input type="text" id="subInput-${r.id}" placeholder="이 리뷰에 생각 더하기..★" class="cy-input" style="flex:1; font-size:10px; padding:2px;">
-                        <button class="btn-action btn-submit" style="padding:2px 6px; font-size:10px; background:#2478A6;" onclick="addSubReview(${r.id})">추가</button>
+                        <button class="btn-action btn-submit" style="padding:2px 6px; font-size:10px; background:#2478A6;" onclick="addSubReview('${r.id}')">추가</button>
                     </div>
                 </div>
             `;
@@ -1030,32 +1030,30 @@
         });
     }
 
-    function addGuestMsg() {
+    window.addGuestMsg = function() {
         const name = document.getElementById('guestName').value.trim();
         const msg = document.getElementById('guestMsg').value.trim();
         if(!name || !msg) { alert('이름과 한마디를 다 채워라..★'); return; }
 
-        const msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
-        msgs.unshift({ id: Date.now(), name: name, msg: msg, date: new Date().toLocaleDateString() });
-        localStorage.setItem('cyGuestbookData', JSON.stringify(msgs));
+        push(ref(db, 'cyGuestbookData'), {
+            name: name,
+            msg: msg,
+            date: new Date().toLocaleDateString()
+        });
         document.getElementById('guestName').value = '';
         document.getElementById('guestMsg').value = '';
-        loadGuestbookMsgs();
     }
 
-    function deleteGuestMsg(id) {
+    window.deleteGuestMsg = function(id) {
         if(!confirm('이 방명록 글을 삭제하겠느냐..★')) return;
-        let msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
-        msgs = msgs.filter(m => m.id !== id);
-        localStorage.setItem('cyGuestbookData', JSON.stringify(msgs));
-        loadGuestbookMsgs();
+        remove(ref(db, `cyGuestbookData/${id}`));
     }
 
-    function loadGuestbookMsgs() {
+    function loadGuestbookMsgs(dataObj) {
         const area = document.getElementById('guestbookListArea');
         area.innerHTML = '';
-        const msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
-        msgs.forEach(m => {
+        const list = Object.keys(dataObj).map(key => ({ id: key, ...dataObj[key] })).reverse();
+        list.forEach(m => {
             const el = document.createElement('div');
             el.className = 'board-item';
             el.innerHTML = `
@@ -1063,7 +1061,7 @@
                     <span>🧑 ${m.name}</span>
                     <div>
                         <span style="color:#aaa; font-size:10px; margin-right:6px;">${m.date}</span>
-                        <span style="color:#ff8888; cursor:pointer; font-size:10px;" onclick="deleteGuestMsg(${m.id})">[X]</span>
+                        <span style="color:#ff8888; cursor:pointer; font-size:10px;" onclick="deleteGuestMsg('${m.id}')">[X]</span>
                     </div>
                 </div>
                 <div style="padding:4px 0; color:#555;">${m.msg}</div>
@@ -1072,14 +1070,14 @@
         });
     }
 
-    /* 달력 처음 방문 시 안 보이거나 깨지는 현상 수정 */
+    // [수정] 캘린더 월요일 시작형 배치 연산 로직 전면 변경
     function renderCalendar() {
         document.getElementById('calendarTitle').innerText = `${calYear}. ${String(calMonth + 1).padStart(2, '0')}`;
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = '';
 
-        // 일~토 구조에 맞춘 레이블 노출
-        const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
+        // 월요일 시작 헤더 배치
+        const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
         dayLabels.forEach(lbl => {
             const el = document.createElement('div');
             el.className = 'cal-day-label';
@@ -1092,7 +1090,8 @@
         const firstDay = new Date(calYear, calMonth, 1);
         const lastDay = new Date(calYear, calMonth + 1, 0);
         
-        let startDayIdx = firstDay.getDay(); 
+        // 일요일(0)을 6으로, 월~토(1~6)를 0~5로 매핑하도록 인덱스 조정
+        let startDayIdx = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; 
 
         const prevLastDay = new Date(calYear, calMonth, 0).getDate();
         for (let i = startDayIdx; i > 0; i--) {
@@ -1102,19 +1101,17 @@
             grid.appendChild(cell);
         }
 
-        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
         for (let d = 1; d <= lastDay.getDate(); d++) {
             const cell = document.createElement('div');
             cell.className = 'cal-cell';
             cell.innerHTML = `<span>${d}</span><div class="cal-dot"></div>`;
 
             const currentKey = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-            
             const checkDate = new Date(calYear, calMonth, d);
             if(checkDate.getDay() === 6) cell.style.color = '#2478A6';
             if(checkDate.getDay() === 0) cell.style.color = '#FF6600';
 
-            if (diaries[currentKey]) cell.classList.add('has-diary');
+            if (diariesGlobal[currentKey]) cell.classList.add('has-diary');
             if (currentKey === currentSelectedKey) cell.classList.add('selected');
 
             cell.onclick = () => {
@@ -1126,7 +1123,7 @@
         }
     }
 
-    function moveMonth(dir) {
+    window.moveMonth = function(dir) {
         calMonth += dir;
         if (calMonth > 11) { calMonth = 0; calYear++; }
         else if (calMonth < 0) { calMonth = 11; calYear--; }
@@ -1142,10 +1139,9 @@
     }
 
     function checkDiaryByDate(dateKey) {
-        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
-        if (diaries[dateKey]) {
-            textarea.value = diaries[dateKey];
-            document.getElementById('charNum').innerText = diaries[dateKey].length;
+        if (diariesGlobal[dateKey]) {
+            textarea.value = diariesGlobal[dateKey];
+            document.getElementById('charNum').innerText = diariesGlobal[dateKey].length;
             submitBtn.innerText = '수정..';
             deleteBtn.style.display = 'inline-block';
         } else {
@@ -1156,34 +1152,25 @@
         }
     }
 
-    function saveDiary() {
+    window.saveDiary = function() {
         const text = textarea.value.trim();
         if(!text) { alert('내용을 입력해라.. 인간아..'); return; }
-        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
-        diaries[currentSelectedKey] = text;
-        localStorage.setItem('cyDiary', JSON.stringify(diaries));
-        alert(submitBtn.innerText === '수정..' ? '일기가 수정되었다..' : '일기가 등록 완료..');
-        renderCalendar();
-        displayRightDiaries();
-        checkDiaryByDate(currentSelectedKey);
+        set(ref(db, `cyDiary/${currentSelectedKey}`), text).then(() => {
+            alert(submitBtn.innerText === '수정..' ? '일기가 수정되었다..' : '일기가 등록 완료..');
+        });
     }
 
-    function deleteDiary() {
+    window.deleteDiary = function() {
         if(!confirm('정말로 이 날의 기억을 지우겠느냐..★')) return;
-        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
-        delete diaries[currentSelectedKey];
-        localStorage.setItem('cyDiary', JSON.stringify(diaries));
-        alert('기억이 깨끗이 지워졌다..');
-        renderCalendar();
-        displayRightDiaries();
-        checkDiaryByDate(currentSelectedKey);
+        remove(ref(db, `cyDiary/${currentSelectedKey}`)).then(() => {
+            alert('기억이 깨끗이 지워졌다..');
+        });
     }
 
-    function displayRightDiaries() {
+    window.displayRightDiaries = function() {
         const listContainer = document.getElementById('rightDiaryList');
         listContainer.innerHTML = '';
-        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
-        const sortedKeys = Object.keys(diaries).sort();
+        const sortedKeys = Object.keys(diariesGlobal).sort();
         const targetYear = yearFilter.value;
         const targetMonth = monthFilter.value;
         let count = 0;
@@ -1194,7 +1181,7 @@
                 count++;
                 const item = document.createElement('div');
                 item.className = 'right-diary-item';
-                item.innerHTML = `<span>[${parseInt(d)}일]</span> ${diaries[key]}`;
+                item.innerHTML = `<span>[${parseInt(d)}일]</span> ${diariesGlobal[key]}`;
                 item.onclick = () => {
                     calYear = parseInt(y); calMonth = parseInt(m) - 1;
                     setTargetDate(key); renderCalendar(); switchTab('diary');
@@ -1205,84 +1192,50 @@
         if (count === 0) listContainer.innerHTML = `<div style="color:#999; text-align:center; padding:5px 0;">이 달엔 남긴 기억이 없다..</div>`;
     }
 
-    function uploadPhoto(input) {
+    window.uploadPhoto = function(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const imgData = e.target.result;
-                document.getElementById('profileImg').src = imgData;
-                document.getElementById('profileImg').style.display = 'block';
-                document.getElementById('photoPlaceholder').style.display = 'none';
-                localStorage.setItem('cyProfilePhoto', imgData);
+                set(ref(db, 'cyProfilePhoto'), e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
-    function loadProfilePhoto() {
-        const savedImg = localStorage.getItem('cyProfilePhoto');
-        if (savedImg) {
-            document.getElementById('profileImg').src = savedImg;
-            document.getElementById('profileImg').style.display = 'block';
-            document.getElementById('photoPlaceholder').style.display = 'none';
-        }
-    }
-    document.getElementById('statusText').onclick = editStatus; 
-    function editStatus() {
+
+    window.editStatus = function() {
         const textSpan = document.getElementById('statusText');
         const inputField = document.getElementById('statusInput');
-        inputField.value = textSpan.innerText === "지정된 상태메세지가 없다.. (클릭 수정)" ? "" : textSpan.innerText;
+        inputField.value = textSpan.innerText.includes("지정된 상태메세지가 없다") ? "" : textSpan.innerText;
         textSpan.style.display = 'none'; inputField.style.display = 'block'; inputField.focus();
     }
-    function saveStatus() {
-        const textSpan = document.getElementById('statusText');
+    window.saveStatus = function() {
         const inputField = document.getElementById('statusInput');
         const newMsg = inputField.value.trim();
-        if (newMsg) { textSpan.innerText = newMsg; localStorage.setItem('cyStatusMsg', newMsg); } 
-        else { textSpan.innerText = "지정된 상태메세지가 없다.. (클릭 수정)"; localStorage.removeItem('cyStatusMsg'); }
-        inputField.style.display = 'none'; textSpan.style.display = 'block';
+        set(ref(db, 'cyStatusMsg'), newMsg || null);
+        inputField.style.display = 'none';
+        document.getElementById('statusText').style.display = 'block';
     }
-    function loadTitle() {
-        const savedTitle = localStorage.getItem('cyDiaryTitle');
-        if (savedTitle) document.getElementById('titleText').innerText = savedTitle;
-    }
-    document.getElementById('titleText').onclick = editTitle;
-    function editTitle() {
+
+    window.editTitle = function() {
         const textSpan = document.getElementById('titleText');
         const inputField = document.getElementById('titleInput');
         inputField.value = textSpan.innerText;
         textSpan.style.display = 'none'; inputField.style.display = 'inline-block'; inputField.focus();
     }
-    function saveTitle() {
-        const textSpan = document.getElementById('titleText');
+    window.saveTitle = function() {
         const inputField = document.getElementById('titleInput');
         const newTitle = inputField.value.trim();
-        if (newTitle) { textSpan.innerText = newTitle; localStorage.setItem('cyDiaryTitle', newTitle); }
-        inputField.style.display = 'none'; textSpan.style.display = 'block';
+        set(ref(db, 'cyDiaryTitle'), newTitle || null);
+        inputField.style.display = 'none';
+        document.getElementById('titleText').style.display = 'block';
     }
-    function loadStatus() {
-        const savedMsg = localStorage.getItem('cyStatusMsg');
-        if (savedMsg) document.getElementById('statusText').innerText = savedMsg;
-    }
+
     textarea.addEventListener('input', function() {
         document.getElementById('charNum').innerText = this.value.length;
     });
-</script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAQdepCMLBffqjEhAvWM4NclP1P80MiL5M",
-    authDomain: "eungview-5e3f2.firebaseapp.com",
-    projectId: "eungview-5e3f2",
-    storageBucket: "eungview-5e3f2.firebasestorage.app",
-    messagingSenderId: "513419971849",
-    appId: "1:513419971849:web:ae7e4e8ebdaf7d182e97d8",
-    measurementId: "G-6VRHB68Y0X"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    
+    document.getElementById('statusText').onclick = window.editStatus;
+    document.getElementById('titleText').onclick = window.editTitle;
 </script>
 
 </body>
