@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>싸이월드 감성 미니홈피</title>
+    <style>
+        body {
+            background-color: #8c8c8c;
+            background-image: 
+                linear-gradient(to right, #9c9c9c 1px, transparent 1px),
+                linear-gradient(to bottom, #9c9c9c 1px, transparent 1px);
+            background-size: 20px 20px;
+            font-family: '돋움', dotum, sans-serif;
+            font-size: 12px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .cy-outer-skin {
+            background-color: #5bc4de;
+            border: 1px solid #3fa2bd;
+            border-radius: 12px;
+            padding: 18px 12px 18px 18px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+        }
+        .cy-cover {
+            background-color: #efefef;
+            border: 2px dashed #fff;
+            border-radius: 8px;
+            padding: 15px;
+            width: 840px;
+            height: 540px;
+            display: flex;
+            position: relative;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        /* 바인더 링 */
+        .binder-rings {
+            position: absolute;
+            left: 224px;
+            top: 0;
+            bottom: 0;
+            width: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 80px 0;
+            box-sizing: border-box;
+            z-index: 20;
+            pointer-events: none;
+        }
+        .ring-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .ring-container {
+            position: relative;
+            width: 32px;
+            height: 14px;
+        }
+        .ring-hole-left, .ring-hole-right {
+            position: absolute;
+            width: 6px;
+            height: 10px;
+            background-color: #555555;
+            border-radius: 50%;
+            top: 2px;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.7);
+        }
+        .ring-hole-left { left: -1px; }
+        .ring-hole-right { right: -1px; }
+
+        .ring-body {
+            position: absolute;
+            left: 1px;
+            top: 1px;
+            width: 28px;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to bottom, #ffffff 0%, #dcdcdc 25%, #999999 55%, #b5b5b5 80%, #ffffff 100%);
+            border: 1px solid #5a5a5a;
+            box-sizing: border-box;
+            box-shadow: 0px 3px 3px rgba(0,0,0,0.25);
+            z-index: 21;
+        }
+
+        /* 좌우 레이어 */
+        .left-box {
+            display: flex;
+            flex-direction: column;
+            width: 210px;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 1;
+            box-sizing: border-box;
+        }
+        .right-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex-grow: 1;
+            height: 100%;
+            margin-left: 35px;
+            z-index: 1;
+            box-sizing: border-box;
+        }
+        
+        .left-inner-box {
+            background-color: #FFF;
+            border: 1px solid #a6a6a6;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .left-main-profile {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .right-inner-box {
+            background-color: #FFF;
+            border: 1px solid #a6a6a6;
+            border-radius: 8px;
+            padding: 16px;
+            flex-grow: 1;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* 헤더 */
+        .cy-header {
+            height: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 10px;
+            padding-bottom: 3px;
+            box-sizing: border-box;
+        }
+        .main-title-area {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .main-title-text {
+            color: #2478A6;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .main-title-input {
+            font-family: '돋움', dotum, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2478A6;
+            border: 1px solid #2478A6;
+            padding: 1px 5px;
+            outline: none;
+            width: 150px;
+        }
+        .today-counter {
+            font-size: 11px;
+            color: #333;
+        }
+
+        /* 프로필 영역 */
+        .profile-photo-area {
+            text-align: center;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .profile-img-wrapper {
+            width: 145px;
+            height: 115px;
+            border: 1px solid #d9d9d9;
+            background-color: #f6f6f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .profile-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-placeholder {
+            color: #999;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+
+        /* 상태메세지 */
+        .status-msg-area {
+            border-top: 1px dashed #a6a6a6;
+            padding: 5px 0;
+            margin-bottom: 5px;
+            flex-shrink: 0;
+        }
+        .status-msg-text {
+            color: #666;
+            font-size: 11px;
+            line-height: 1.4;
+            cursor: pointer;
+            display: block;
+            word-break: break-all;
+        }
+        .status-msg-input {
+            width: 100%;
+            font-family: '돋움', dotum, sans-serif;
+            font-size: 11px;
+            border: 1px solid #2478A6;
+            padding: 2px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* 달력 간격 및 점 겹침 방지 수정 */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #2478A6;
+            margin-bottom: 6px;
+            border-top: 1px dashed #a6a6a6;
+            padding-top: 5px;
+            flex-shrink: 0;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            row-gap: 5px;
+            column-gap: 1px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .cal-day-label {
+            font-weight: bold;
+            color: #666;
+            padding-bottom: 2px;
+            font-size: 9px;
+        }
+        .cal-cell {
+            cursor: pointer;
+            position: relative;
+            font-size: 10px;
+            height: 26px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .cal-cell span {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .cal-cell:hover span {
+            background-color: #eef7f9;
+        }
+        .cal-cell.selected span {
+            background-color: #2478A6 !important;
+            color: #FFF !important;
+            font-weight: bold;
+        }
+        .cal-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: transparent;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .cal-cell.has-diary .cal-dot {
+            background-color: #ff6600 !important;
+        }
+        .cal-cell.other-month {
+            color: #ccc;
+            opacity: 0.5;
+        }
+        
+        /* 우측 하단 기록찾기 구역 */
+        .right-search-box {
+            margin-top: 8px;
+            border-top: 1px dashed #a6a6a6;
+            padding-top: 6px;
+            display: flex;
+            flex-direction: column;
+            height: 120px;
+            box-sizing: border-box;
+        }
+        .filter-selects {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        .cy-select {
+            font-family: '돋움', dotum, sans-serif;
+            font-size: 11px;
+            border: 1px solid #a6a6a6;
+            padding: 1px;
+            color: #555;
+            outline: none;
+        }
+        .right-diary-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .right-diary-item {
+            cursor: pointer;
+            color: #555;
+            padding: 1px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .right-diary-item:hover {
+            color: #2478A6;
+            font-weight: bold;
+        }
+        .right-diary-item span {
+            color: #ff6600;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        
+        /* 본문 구조 */
+        .menu-content {
+            display: none;
+            height: 100%;
+        }
+        .menu-content.active {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .scrollable-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        /* 다이어리 */
+        .diary-date-header {
+            color: #ff6600;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 3px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #d1d1d1;
+            padding: 8px;
+            box-sizing: border-box;
+            resize: none;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .form-footer {
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .char-count { color: #999; font-size: 11px; }
+        .btn-group { display: flex; gap: 5px; }
+        .btn-action {
+            color: white; border: none; padding: 4px 12px;
+            font-size: 11px; cursor: pointer; border-radius: 2px;
+        }
+        .btn-submit { background-color: #ff6600; }
+        .btn-submit:hover { background-color: #e05500; }
+        .btn-delete { background-color: #777; display: none; }
+        .btn-delete:hover { background-color: #555; }
+
+        /* 미니룸 박스 수정 - 이미지 배경 대응 */
+        .miniroom-box {
+            border: 1px solid #d9d9d9;
+            background-color: #fcf6e8;
+            height: 110px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: #bbb;
+            position: relative;
+            margin-bottom: 12px;
+            cursor: pointer;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .miniroom-text {
+            background-color: rgba(255,255,255,0.7);
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            z-index: 2;
+        }
+
+        /* 중요일정 및 위시리스트 컴포넌트 스타일 */
+        .home-list-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .home-card {
+            flex: 1;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 180px;
+            box-sizing: border-box;
+        }
+        .card-title {
+            font-weight: bold;
+            color: #2478A6;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 4px;
+            font-size: 11px;
+        }
+        .card-input-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .card-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .card-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 11px;
+        }
+        .card-item input[type="checkbox"] {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* 리뷰 전용 UI */
+        .filter-tabs {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .filter-btn.active {
+            background: #2478A6;
+            color: #fff;
+            border-color: #2478A6;
+        }
+        .board-list { display: flex; flex-direction: column; gap: 8px; }
+        .board-item {
+            border: 1px solid #eaeaea; background: #fafafa;
+            padding: 8px; border-radius: 4px; position: relative;
+        }
+        .board-header {
+            display: flex; justify-content: space-between;
+            color: #2478A6; font-weight: bold; margin-bottom: 4px;
+            border-bottom: 1px dashed #ddd; padding-bottom: 3px;
+        }
+        .tag-badge {
+            color: #fff; padding: 1px 4px; border-radius: 2px; font-size: 10px; margin-right: 5px;
+        }
+        .tag-movie { background: #e91e63; }
+        .tag-comic { background: #9c27b0; }
+        .tag-book { background: #4caf50; }
+        .tag-etc { background: #ff9800; } 
+
+        /* 추가 리뷰(댓글) 구조 디자인 */
+        .sub-review-section {
+            margin-top: 6px;
+            background: #f0f0f0;
+            padding: 6px;
+            border-radius: 3px;
+        }
+        .sub-review-list {
+            margin-bottom: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .sub-review-item {
+            font-size: 11px;
+            padding: 2px 0;
+            border-bottom: 1px dashed #e0e0e0;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sub-review-input-row {
+            display: flex;
+            gap: 3px;
+        }
+
+        .input-row {
+            display: flex; gap: 4px; margin-bottom: 10px; flex-shrink: 0; flex-wrap: wrap;
+        }
+        .cy-input {
+            border: 1px solid #d1d1d1; padding: 4px;
+            font-family: '돋움', dotum, sans-serif; font-size: 11px; box-sizing: border-box;
+        }
+
+        /* 우측 탭 */
+        .cy-tabs { display: flex; flex-direction: column; gap: 2px; margin-left: -1px; }
+        .cy-tab {
+            background-color: #2478A6; color: white; border: 1px solid #a6a6a6;
+            border-left: none; border-radius: 0 5px 5px 0; padding: 8px 6px;
+            writing-mode: vertical-lr; font-size: 11px; cursor: pointer;
+        }
+        .cy-tab.active {
+            background-color: #fff; color: #333; font-weight: bold;
+            border-right: none; position: relative; left: -1px; z-index: 12;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cy-outer-skin">
+    <div class="cy-cover">
+        
+        <div class="binder-rings">
+            <div class="ring-group">
+                <div class="ring-container"><div class="ring-hole-left"></div><div class="ring-body"></div><div class="ring-hole-right"></div></div>
+                <div class="ring-container"><div class="ring-hole-left"></div><div class="ring-body"></div><div class="ring-hole-right"></div></div>
+            </div>
+            <div class="ring-group">
+                <div class="ring-container"><div class="ring-hole-left"></div><div class="ring-body"></div><div class="ring-hole-right"></div></div>
+                <div class="ring-container"><div class="ring-hole-left"></div><div class="ring-body"></div><div class="ring-hole-right"></div></div>
+            </div>
+        </div>
+        
+        <div class="left-box">
+            <div class="cy-header">
+                <div class="today-counter">TODAY <span style="color:red; font-weight:bold;">1</span> | TOTAL 869</div>
+            </div>
+            
+            <div class="left-inner-box left-main-profile">
+                <div class="profile-photo-area">
+                    <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="uploadPhoto(this)">
+                    <div class="profile-img-wrapper" onclick="document.getElementById('photoInput').click()">
+                        <img id="profileImg" src="" style="display:none;">
+                        <div id="photoPlaceholder" class="photo-placeholder">클릭해서<br>정사각형 사진을<br>지정해라..★</div>
+                    </div>
+                </div>
+
+                <div class="status-msg-area">
+                    <span id="statusText" class="status-msg-text" ondblclick="editStatus()">지정된 상태메세지가 없다.. (더블클릭 수정)</span>
+                    <input type="text" id="statusInput" class="status-msg-input" style="display:none;" onblur="saveStatus()" onkeydown="if(event.key==='Enter') saveStatus()">
+                </div>
+
+                <div class="calendar-header">
+                    <span style="cursor:pointer;" onclick="moveMonth(-1)">◀</span>
+                    <span id="calendarTitle"></span>
+                    <span style="cursor:pointer;" onclick="moveMonth(1)">▶</span>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+        </div>
+
+        <div class="right-box">
+            <div class="cy-header">
+                <div class="main-title-area">
+                    <span id="titleText" class="main-title-text" ondblclick="editTitle()">▲ 내 공간에 온 걸 환영해..★</span>
+                    <input type="text" id="titleInput" class="main-title-input" style="display:none;" onblur="saveTitle()" onkeydown="if(event.key==='Enter') saveTitle()">
+                </div>
+            </div>
+            
+            <div class="right-inner-box">
+                
+                <div id="content-home" class="menu-content active">
+                    <div class="scrollable-body">
+                        <div style="font-weight:bold; color:#2478A6; margin-bottom:5px;">Mini Room</div>
+                        
+                        <!-- 미니룸 구역 클릭 시 사진 업로드 연동 -->
+                        <input type="file" id="miniroomPhotoInput" accept="image/*" style="display:none;" onchange="uploadMiniroomPhoto(this)">
+                        <div class="miniroom-box" id="miniroomBox" onclick="document.getElementById('miniroomPhotoInput').click()">
+                            <span class="miniroom-text" id="miniroomPlaceholder">🏠 미니룸 클릭 시 사진 변경 가능..★</span>
+                        </div>
+                        
+                        <div class="home-list-section">
+                            <div class="home-card">
+                                <div class="card-title">📌 중요 일정</div>
+                                <div class="card-input-row">
+                                    <input type="text" id="todoInput" placeholder="일정 입력.." class="cy-input" style="flex:1; padding:2px;" onkeydown="if(event.key==='Enter') addHomeItem('todo')">
+                                    <button class="btn-action btn-submit" onclick="addHomeItem('todo')" style="padding:2px 6px; font-size:10px;">추가</button>
+                                </div>
+                                <ul class="card-list" id="todoListArea"></ul>
+                            </div>
+
+                            <div class="home-card">
+                                <div class="card-title">🎁 위시리스트</div>
+                                <div class="card-input-row">
+                                    <input type="text" id="wishInput" placeholder="위시 입력.." class="cy-input" style="flex:1; padding:2px;" onkeydown="if(event.key==='Enter') addHomeItem('wish')">
+                                    <button class="btn-action btn-submit" onclick="addHomeItem('wish')" style="padding:2px 6px; font-size:10px;">추가</button>
+                                </div>
+                                <ul class="card-list" id="wishListArea"></ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="content-diary" class="menu-content">
+                    <div class="diary-date-header" id="todayDateDisplay"></div>
+                    <textarea id="diaryInput" maxlength="500" placeholder="오늘의 심정을 500자 이내로 적어보아라.."></textarea>
+                    <div class="form-footer">
+                        <div class="char-count"><span id="charNum">0</span>/500 자</div>
+                        <div class="btn-group">
+                            <button class="btn-action btn-delete" id="deleteBtn" onclick="deleteDiary()">삭제..</button>
+                            <button class="btn-action btn-submit" id="submitBtn" onclick="saveDiary()">등록..</button>
+                        </div>
+                    </div>
+
+                    <div class="right-search-box">
+                        <div style="font-weight:bold; color:#2478A6; margin-bottom:4px;">년도/월별 기록찾기</div>
+                        <div class="filter-selects">
+                            <select id="yearFilter" class="cy-select" onchange="displayRightDiaries()">
+                                <option value="2026">2026년</option><option value="2025">2025년</option><option value="2024">2024년</option>
+                            </select>
+                            <select id="monthFilter" class="cy-select" onchange="displayRightDiaries()">
+                                <option value="01">1월</option><option value="02">2월</option><option value="03">3월</option>
+                                <option value="04">4월</option><option value="05">5월</option><option value="06">6월</option>
+                                <option value="07">7월</option><option value="08">8월</option><option value="09">9월</option>
+                                <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+                            </select>
+                        </div>
+                        <div class="right-diary-list" id="rightDiaryList"></div>
+                    </div>
+                </div>
+
+                <div id="content-review" class="menu-content">
+                    <div class="input-row">
+                        <select id="reviewType" class="cy-input" style="width:70px;">
+                            <option value="movie">🎬 영화</option>
+                            <option value="comic">🎨 만화</option>
+                            <option value="book">📚 책</option>
+                            <option value="etc">💡 기타</option>
+                        </select>
+                        <input type="text" id="reviewTitle" placeholder="제목" class="cy-input" style="width:130px;">
+                        
+                        <select id="reviewStar" class="cy-input" style="width:65px;">
+                            <option value="">별점</option>
+                            <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+                            <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                            <option value="⭐⭐⭐">⭐⭐⭐</option>
+                            <option value="⭐⭐">⭐⭐</option>
+                            <option value="⭐">⭐</option>
+                        </select>
+                        
+                        <input type="text" id="reviewComment" placeholder="감상 기록..★" class="cy-input" style="flex:1; min-width:140px;">
+                        <button class="btn-action btn-submit" onclick="addReviewMsg()" style="margin:0; padding:4px 10px;">기록</button>
+                    </div>
+
+                    <!-- 카테고리 필터 탭 -->
+                    <div class="filter-tabs">
+                        <button class="filter-btn active" id="f-type-all" onclick="filterReviewType('all')">전체보기</button>
+                        <button class="filter-btn" id="f-type-movie" onclick="filterReviewType('movie')">영화</button>
+                        <button class="filter-btn" id="f-type-comic" onclick="filterReviewType('comic')">만화</button>
+                        <button class="filter-btn" id="f-type-book" onclick="filterReviewType('book')">책</button>
+                        <button class="filter-btn" id="f-type-etc" onclick="filterReviewType('etc')">기타</button>
+                    </div>
+                    
+                    <!-- 별점별 필터 탭 추가 -->
+                    <div class="filter-tabs" style="border-bottom:none; margin-bottom:6px;">
+                        <button class="filter-btn active" id="f-star-all" onclick="filterReviewStar('all')">★ 전체</button>
+                        <button class="filter-btn" id="f-star-5" onclick="filterReviewStar('⭐⭐⭐⭐⭐')">5점</button>
+                        <button class="filter-btn" id="f-star-4" onclick="filterReviewStar('⭐⭐⭐⭐')">4점</button>
+                        <button class="filter-btn" id="f-star-3" onclick="filterReviewStar('⭐⭐⭐')">3점</button>
+                        <button class="filter-btn" id="f-star-2" onclick="filterReviewStar('⭐⭐')">2점</button>
+                        <button class="filter-btn" id="f-star-1" onclick="filterReviewStar('⭐')">1점</button>
+                    </div>
+
+                    <div class="scrollable-body">
+                        <div class="board-list" id="reviewListArea"></div>
+                    </div>
+                </div>
+
+                <div id="content-guestbook" class="menu-content">
+                    <div class="input-row">
+                        <input type="text" id="guestName" placeholder="이름" class="cy-input" style="width:60px;">
+                        <input type="text" id="guestMsg" placeholder="일촌 평이나 남기고 가라..★" class="cy-input" style="flex:1;">
+                        <button class="btn-action btn-submit" onclick="addGuestMsg()" style="margin:0; padding:4px 10px;">남기기</button>
+                    </div>
+                    <div class="scrollable-body">
+                        <div class="board-list" id="guestbookListArea"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cy-tabs">
+        <div class="cy-tab active" id="tab-home" onclick="switchTab('home')">홈</div>
+        <div class="cy-tab" id="tab-diary" onclick="switchTab('diary')">다이어리</div>
+        <div class="cy-tab" id="tab-review" onclick="switchTab('review')">리뷰</div>
+        <div class="cy-tab" id="tab-guestbook" onclick="switchTab('guestbook')">방명록</div>
+    </div>
+</div>
+
+<script>
+    const korDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    let currentSelectedKey = ""; 
+    let calYear, calMonth; 
+    
+    // 리뷰 멀티 필터링을 위한 상태 값 변경
+    let currentReviewTypeFilter = 'all';
+    let currentReviewStarFilter = 'all';
+
+    const textarea = document.getElementById('diaryInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const dateDisplay = document.getElementById('todayDateDisplay');
+    const yearFilter = document.getElementById('yearFilter');
+    const monthFilter = document.getElementById('monthFilter');
+
+    window.onload = function() {
+        loadTitle();
+        loadProfilePhoto();
+        loadMiniroomPhoto(); // 미니룸 사진 로드 추가
+        loadStatus();
+        loadReviewMsgs();
+        loadGuestbookMsgs();
+        loadHomeLists();
+        
+        const today = new Date();
+        calYear = today.getFullYear();
+        calMonth = today.getMonth(); 
+        
+        yearFilter.value = String(calYear);
+        monthFilter.value = String(calMonth + 1).padStart(2, '0');
+
+        setTargetDate(`${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+        renderCalendar();
+        displayRightDiaries();
+    };
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.cy-tab').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.menu-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        document.getElementById(`content-${tabName}`).classList.add('active');
+    }
+
+    function loadHomeLists() {
+        renderHomeList('todo');
+        renderHomeList('wish');
+    }
+
+    function renderHomeList(type) {
+        const area = document.getElementById(type === 'todo' ? 'todoListArea' : 'wishListArea');
+        area.innerHTML = '';
+        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
+        const items = JSON.parse(localStorage.getItem(key) || '[]');
+
+        items.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'card-item';
+            li.innerHTML = `
+                <input type="checkbox" onclick="removeHomeItem('${type}', ${index})">
+                <span>${item}</span>
+            `;
+            area.appendChild(li);
+        });
+    }
+
+    function addHomeItem(type) {
+        const input = document.getElementById(type === 'todo' ? 'todoInput' : 'wishInput');
+        const value = input.value.trim();
+        if(!value) return;
+
+        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
+        const items = JSON.parse(localStorage.getItem(key) || '[]');
+        items.push(value);
+        localStorage.setItem(key, JSON.stringify(items));
+
+        input.value = '';
+        renderHomeList(type);
+    }
+
+    function removeHomeItem(type, index) {
+        const key = type === 'todo' ? 'cyHomeTodo' : 'cyHomeWish';
+        let items = JSON.parse(localStorage.getItem(key) || '[]');
+        items.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(items));
+        renderHomeList(type);
+    }
+
+    /* 미니룸 사진 로컬 업로드 처리 */
+    function uploadMiniroomPhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                const box = document.getElementById('miniroomBox');
+                box.style.backgroundImage = `url(${imgData})`;
+                document.getElementById('miniroomPlaceholder').style.display = 'none';
+                localStorage.setItem('cyMiniroomPhoto', imgData);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function loadMiniroomPhoto() {
+        const savedImg = localStorage.getItem('cyMiniroomPhoto');
+        if (savedImg) {
+            const box = document.getElementById('miniroomBox');
+            box.style.backgroundImage = `url(${savedImg})`;
+            document.getElementById('miniroomPlaceholder').style.display = 'none';
+        }
+    }
+
+    function addReviewMsg() {
+        const type = document.getElementById('reviewType').value;
+        const title = document.getElementById('reviewTitle').value.trim();
+        const star = document.getElementById('reviewStar').value;
+        const comment = document.getElementById('reviewComment').value.trim();
+        
+        if(!star) { alert('별점을 선택해라..★'); return; }
+        if(!title || !comment) { alert('제목과 감상평을 모두 채워라..★'); return; }
+
+        const reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
+        // 구조 확장: subReviews(추가 리뷰 댓글 배열) 필드 추가
+        reviews.unshift({ 
+            id: Date.now(), 
+            type, 
+            title, 
+            star, 
+            comment, 
+            date: new Date().toLocaleDateString(),
+            subReviews: [] 
+        });
+        localStorage.setItem('cyReviewData', JSON.stringify(reviews));
+        
+        document.getElementById('reviewTitle').value = '';
+        document.getElementById('reviewStar').value = '';
+        document.getElementById('reviewComment').value = '';
+        loadReviewMsgs();
+    }
+
+    /* 특정 리뷰 카드에 추가 리뷰(댓글) 다는 함수 */
+    function addSubReview(reviewId) {
+        const inputField = document.getElementById(`subInput-${reviewId}`);
+        const text = inputField.value.trim();
+        if(!text) { alert('추가 리뷰 내용을 입력해라..★'); return; }
+
+        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
+        const targetIndex = reviews.findIndex(r => r.id === reviewId);
+        
+        if(targetIndex !== -1) {
+            if(!reviews[targetIndex].subReviews) reviews[targetIndex].subReviews = [];
+            reviews[targetIndex].subReviews.push({
+                id: Date.now(),
+                comment: text,
+                date: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('cyReviewData', JSON.stringify(reviews));
+            loadReviewMsgs();
+        }
+    }
+
+    /* 추가 리뷰(댓글) 개별 삭제 기능 */
+    function deleteSubReview(reviewId, subId) {
+        if(!confirm('이 추가 리뷰를 삭제하겠느냐..★')) return;
+        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
+        const targetIndex = reviews.findIndex(r => r.id === reviewId);
+        
+        if(targetIndex !== -1 && reviews[targetIndex].subReviews) {
+            reviews[targetIndex].subReviews = reviews[targetIndex].subReviews.filter(s => s.id !== subId);
+            localStorage.setItem('cyReviewData', JSON.stringify(reviews));
+            loadReviewMsgs();
+        }
+    }
+
+    function deleteReviewMsg(id) {
+        if(!confirm('리뷰 기록을 삭제하겠느냐..★')) return;
+        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
+        reviews = reviews.filter(r => r.id !== id);
+        localStorage.setItem('cyReviewData', JSON.stringify(reviews));
+        loadReviewMsgs();
+    }
+
+    /* 필터 변경 함수들 (카테고리 / 별점 구분 관리) */
+    function filterReviewType(type) {
+        currentReviewTypeFilter = type;
+        document.querySelectorAll('[id^="f-type-"]').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`f-type-${type}`).classList.add('active');
+        loadReviewMsgs();
+    }
+
+    function filterReviewStar(star) {
+        currentReviewStarFilter = star;
+        document.querySelectorAll('[id^="f-star-"]').forEach(btn => btn.classList.remove('active'));
+        
+        let targetId = 'all';
+        if(star !== 'all') {
+            targetId = star.length; // 별 개수 매핑 (1~5)
+        }
+        document.getElementById(`f-star-${targetId}`).classList.add('active');
+        loadReviewMsgs();
+    }
+
+    function loadReviewMsgs() {
+        const area = document.getElementById('reviewListArea');
+        area.innerHTML = '';
+        let reviews = JSON.parse(localStorage.getItem('cyReviewData') || '[]');
+        
+        // 1차 카테고리 종류 필터링
+        if(currentReviewTypeFilter !== 'all') {
+            reviews = reviews.filter(r => r.type === currentReviewTypeFilter);
+        }
+        // 2차 별점 조건 필터링 추가
+        if(currentReviewStarFilter !== 'all') {
+            reviews = reviews.filter(r => r.star === currentReviewStarFilter);
+        }
+        
+        const typeNames = { movie: '영화', comic: '만화', book: '책', etc: '기타' };
+
+        reviews.forEach(r => {
+            const el = document.createElement('div');
+            el.className = 'board-item';
+            
+            // 기존 서브리뷰 데이터 안전성 검사
+            const subs = r.subReviews || [];
+            let subListHtml = '';
+            subs.forEach(s => {
+                subListHtml += `
+                    <div class="sub-review-item">
+                        <span>ㄴ ${s.comment}</span>
+                        <div>
+                            <span style="color:#aaa; font-size:9px;">${s.date}</span>
+                            <span style="color:#ff8888; cursor:pointer; margin-left:4px;" onclick="deleteSubReview(${r.id}, ${s.id})">[x]</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            el.innerHTML = `
+                <div class="board-header">
+                    <div>
+                        <span class="tag-badge tag-${r.type}">${typeNames[r.type] || '기타'}</span>
+                        <span style="color:#333; font-weight:bold;">${r.title}</span>
+                    </div>
+                    <span style="font-size:11px; font-weight:normal;">${r.star}</span>
+                </div>
+                <div style="padding:4px 0; color:#555; display:flex; justify-content:between; align-items:center;">
+                    <span style="flex:1;">${r.comment}</span>
+                    <span style="color:#aaa; font-size:10px; margin-left:10px;">${r.date}</span>
+                    <span style="color:#ff8888; cursor:pointer; font-size:10px; margin-left:8px;" onclick="deleteReviewMsg(${r.id})">[X]</span>
+                </div>
+                
+                <!-- 하단 추가 리뷰 영역 디자인 조립 -->
+                <div class="sub-review-section">
+                    <div class="sub-review-list">${subListHtml || '<div style="color:#aaa; font-size:10px;">작성된 추가 리뷰가 없다..★</div>'}</div>
+                    <div class="sub-review-input-row">
+                        <input type="text" id="subInput-${r.id}" placeholder="이 리뷰에 생각 더하기..★" class="cy-input" style="flex:1; font-size:10px; padding:2px;">
+                        <button class="btn-action btn-submit" style="padding:2px 6px; font-size:10px; background:#2478A6;" onclick="addSubReview(${r.id})">추가</button>
+                    </div>
+                </div>
+            `;
+            area.appendChild(el);
+        });
+    }
+
+    function addGuestMsg() {
+        const name = document.getElementById('guestName').value.trim();
+        const msg = document.getElementById('guestMsg').value.trim();
+        if(!name || !msg) { alert('이름과 한마디를 다 채워라..★'); return; }
+
+        const msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
+        msgs.unshift({ id: Date.now(), name: name, msg: msg, date: new Date().toLocaleDateString() });
+        localStorage.setItem('cyGuestbookData', JSON.stringify(msgs));
+        document.getElementById('guestName').value = '';
+        document.getElementById('guestMsg').value = '';
+        loadGuestbookMsgs();
+    }
+
+    function deleteGuestMsg(id) {
+        if(!confirm('이 방명록 글을 삭제하겠느냐..★')) return;
+        let msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
+        msgs = msgs.filter(m => m.id !== id);
+        localStorage.setItem('cyGuestbookData', JSON.stringify(msgs));
+        loadGuestbookMsgs();
+    }
+
+    function loadGuestbookMsgs() {
+        const area = document.getElementById('guestbookListArea');
+        area.innerHTML = '';
+        const msgs = JSON.parse(localStorage.getItem('cyGuestbookData') || '[]');
+        msgs.forEach(m => {
+            const el = document.createElement('div');
+            el.className = 'board-item';
+            el.innerHTML = `
+                <div class="board-header">
+                    <span>🧑 ${m.name}</span>
+                    <div>
+                        <span style="color:#aaa; font-size:10px; margin-right:6px;">${m.date}</span>
+                        <span style="color:#ff8888; cursor:pointer; font-size:10px;" onclick="deleteGuestMsg(${m.id})">[X]</span>
+                    </div>
+                </div>
+                <div style="padding:4px 0; color:#555;">${m.msg}</div>
+            `;
+            area.appendChild(el);
+        });
+    }
+
+    function renderCalendar() {
+        document.getElementById('calendarTitle').innerText = `${calYear}. ${String(calMonth + 1).padStart(2, '0')}`;
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+        dayLabels.forEach(lbl => {
+            const el = document.createElement('div');
+            el.className = 'cal-day-label';
+            el.innerText = lbl;
+            if(lbl==='토') el.style.color = '#2478A6';
+            if(lbl==='일') el.style.color = '#FF6600';
+            grid.appendChild(el);
+        });
+
+        const firstDay = new Date(calYear, calMonth, 1);
+        const lastDay = new Date(calYear, calMonth + 1, 0);
+        
+        let startDayIdx = firstDay.getDay() - 1;
+        if (startDayIdx < 0) startDayIdx = 6; 
+
+        const prevLastDay = new Date(calYear, calMonth, 0).getDate();
+        for (let i = startDayIdx; i > 0; i--) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell other-month';
+            cell.innerHTML = `<span>${prevLastDay - i + 1}</span><div class="cal-dot"></div>`;
+            grid.appendChild(cell);
+        }
+
+        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell';
+            cell.innerHTML = `<span>${d}</span><div class="cal-dot"></div>`;
+
+            const currentKey = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            
+            const checkDate = new Date(calYear, calMonth, d);
+            if(checkDate.getDay() === 6) cell.style.color = '#2478A6';
+            if(checkDate.getDay() === 0) cell.style.color = '#FF6600';
+
+            if (diaries[currentKey]) cell.classList.add('has-diary');
+            if (currentKey === currentSelectedKey) cell.classList.add('selected');
+
+            cell.onclick = () => {
+                setTargetDate(currentKey);
+                renderCalendar();
+                switchTab('diary');
+            };
+            grid.appendChild(cell);
+        }
+    }
+
+    function moveMonth(dir) {
+        calMonth += dir;
+        if (calMonth > 11) { calMonth = 0; calYear++; }
+        else if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderCalendar();
+    }
+
+    function setTargetDate(dateVal) {
+        currentSelectedKey = dateVal;
+        const [y, m, d] = dateVal.split('-');
+        const targetDate = new Date(y, m - 1, d);
+        dateDisplay.innerText = `▶ ${y}년 ${m}월 ${d}일 ${korDays[targetDate.getDay()]}의 기록..`;
+        checkDiaryByDate(currentSelectedKey);
+    }
+
+    function checkDiaryByDate(dateKey) {
+        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
+        if (diaries[dateKey]) {
+            textarea.value = diaries[dateKey];
+            document.getElementById('charNum').innerText = diaries[dateKey].length;
+            submitBtn.innerText = '수정..';
+            deleteBtn.style.display = 'inline-block';
+        } else {
+            textarea.value = '';
+            document.getElementById('charNum').innerText = 0;
+            submitBtn.innerText = '등록..';
+            deleteBtn.style.display = 'none';
+        }
+    }
+
+    function saveDiary() {
+        const text = textarea.value.trim();
+        if(!text) { alert('내용을 입력해라.. 인간아..'); return; }
+        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
+        diaries[currentSelectedKey] = text;
+        localStorage.setItem('cyDiary', JSON.stringify(diaries));
+        alert(submitBtn.innerText === '수정..' ? '일기가 수정되었다..' : '일기가 등록 완료..');
+        renderCalendar();
+        displayRightDiaries();
+        checkDiaryByDate(currentSelectedKey);
+    }
+
+    function deleteDiary() {
+        if(!confirm('정말로 이 날의 기억을 지우겠느냐..★')) return;
+        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
+        delete diaries[currentSelectedKey];
+        localStorage.setItem('cyDiary', JSON.stringify(diaries));
+        alert('기억이 깨끗이 지워졌다..');
+        renderCalendar();
+        displayRightDiaries();
+        checkDiaryByDate(currentSelectedKey);
+    }
+
+    function displayRightDiaries() {
+        const listContainer = document.getElementById('rightDiaryList');
+        listContainer.innerHTML = '';
+        const diaries = JSON.parse(localStorage.getItem('cyDiary') || '{}');
+        const sortedKeys = Object.keys(diaries).sort();
+        const targetYear = yearFilter.value;
+        const targetMonth = monthFilter.value;
+        let count = 0;
+
+        sortedKeys.forEach(key => {
+            const [y, m, d] = key.split('-');
+            if (y === targetYear && m === targetMonth) {
+                count++;
+                const item = document.createElement('div');
+                item.className = 'right-diary-item';
+                item.innerHTML = `<span>[${parseInt(d)}일]</span> ${diaries[key]}`;
+                item.onclick = () => {
+                    calYear = parseInt(y); calMonth = parseInt(m) - 1;
+                    setTargetDate(key); renderCalendar(); switchTab('diary');
+                };
+                listContainer.appendChild(item);
+            }
+        });
+        if (count === 0) listContainer.innerHTML = `<div style="color:#999; text-align:center; padding:5px 0;">이 달엔 남긴 기억이 없다..</div>`;
+    }
+
+    function uploadPhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                document.getElementById('profileImg').src = imgData;
+                document.getElementById('profileImg').style.display = 'block';
+                document.getElementById('photoPlaceholder').style.display = 'none';
+                localStorage.setItem('cyProfilePhoto', imgData);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function loadProfilePhoto() {
+        const savedImg = localStorage.getItem('cyProfilePhoto');
+        if (savedImg) {
+            document.getElementById('profileImg').src = savedImg;
+            document.getElementById('profileImg').style.display = 'block';
+            document.getElementById('photoPlaceholder').style.display = 'none';
+        }
+    }
+    document.getElementById('statusText').onclick = editStatus; 
+    function editStatus() {
+        const textSpan = document.getElementById('statusText');
+        const inputField = document.getElementById('statusInput');
+        inputField.value = textSpan.innerText === "지정된 상태메세지가 없다.. (클릭 수정)" ? "" : textSpan.innerText;
+        textSpan.style.display = 'none'; inputField.style.display = 'block'; inputField.focus();
+    }
+    function saveStatus() {
+        const textSpan = document.getElementById('statusText');
+        const inputField = document.getElementById('statusInput');
+        const newMsg = inputField.value.trim();
+        if (newMsg) { textSpan.innerText = newMsg; localStorage.setItem('cyStatusMsg', newMsg); } 
+        else { textSpan.innerText = "지정된 상태메세지가 없다.. (클릭 수정)"; localStorage.removeItem('cyStatusMsg'); }
+        inputField.style.display = 'none'; textSpan.style.display = 'block';
+    }
+    function loadTitle() {
+        const savedTitle = localStorage.getItem('cyDiaryTitle');
+        if (savedTitle) document.getElementById('titleText').innerText = savedTitle;
+    }
+    document.getElementById('titleText').onclick = editTitle;
+    function editTitle() {
+        const textSpan = document.getElementById('titleText');
+        const inputField = document.getElementById('titleInput');
+        inputField.value = textSpan.innerText;
+        textSpan.style.display = 'none'; inputField.style.display = 'inline-block'; inputField.focus();
+    }
+    function saveTitle() {
+        const textSpan = document.getElementById('titleText');
+        const inputField = document.getElementById('titleInput');
+        const newTitle = inputField.value.trim();
+        if (newTitle) { textSpan.innerText = newTitle; localStorage.setItem('cyDiaryTitle', newTitle); }
+        inputField.style.display = 'none'; textSpan.style.display = 'block';
+    }
+    function loadStatus() {
+        const savedMsg = localStorage.getItem('cyStatusMsg');
+        if (savedMsg) document.getElementById('statusText').innerText = savedMsg;
+    }
+    textarea.addEventListener('input', function() {
+        document.getElementById('charNum').innerText = this.value.length;
+    });
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQdepCMLBffqjEhAvWM4NclP1P80MiL5M",
+    authDomain: "eungview-5e3f2.firebaseapp.com",
+    projectId: "eungview-5e3f2",
+    storageBucket: "eungview-5e3f2.firebasestorage.app",
+    messagingSenderId: "513419971849",
+    appId: "1:513419971849:web:ae7e4e8ebdaf7d182e97d8",
+    measurementId: "G-6VRHB68Y0X"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+</body>
+</html>
